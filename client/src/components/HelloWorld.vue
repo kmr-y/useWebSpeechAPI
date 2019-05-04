@@ -6,11 +6,15 @@
           <div class="headline">おはなしをするときはがめんをタッチしてね！</div>
         </v-layout>
       </v-flex>
-      <v-flex xs10>
+      <v-flex xs8>
         <v-layout align-center justify-center fill-height>
           <img src="../assets/animal_fukurou.png">
         </v-layout>
-        <v-tooltip bottom v-model="speech" v-show="speech">{{speech}}</v-tooltip>
+      </v-flex>
+      <v-flex xs2>
+        <v-layout align-center justify-center fill-height>
+          <v-icon x-large v-show="mic" color="red" class="flash">settings_voice</v-icon>
+        </v-layout>
       </v-flex>
     </v-layout>
   </v-container>
@@ -24,13 +28,16 @@ export default {
   data() {
     return {
       text: "",
-      speech: ""
+      mic: false
     };
   },
   watch: {
+    // firebaseのtextが更新されたら呼ばれる
     text(val) {
       if (val) {
+        // hostで入力した文字を発話させる
         this.textToSpeech(val);
+        // hostで入力した文字を履歴に残す
         this.updateHistory(val, "text");
       }
     }
@@ -44,24 +51,23 @@ export default {
     screen() {
       this.recognition();
     },
+    // 音声認識
     recognition() {
       let self = this;
+      self.mic = true;
       var recognition = new webkitSpeechRecognition();
       recognition.lang = "ja-JP";
       recognition.start();
       recognition.onresult = function(event) {
         let speech = event.results[0][0].transcript;
-        self.setSpeech(speech);
+        // 発話内容を履歴に残す
         self.updateHistory(speech, "speech");
       };
+      recognition.onend = function(event) {
+        self.mic = false;
+      };
     },
-    setSpeech(speech) {
-      this.speech = speech;
-      firebase
-        .database()
-        .ref("speech")
-        .set(speech);
-    },
+    // firebaseのtextが更新されたら呼ばれる
     onText() {
       let self = this;
       firebase
@@ -72,6 +78,7 @@ export default {
           self.text = text;
         });
     },
+    // textの読み上げ
     textToSpeech(text) {
       let utterThis = new SpeechSynthesisUtterance(text);
       synth.speak(utterThis);
@@ -79,6 +86,7 @@ export default {
         console.log("SpeechSynthesisUtterance Error: " + event.utterance.text);
       };
     },
+    // text,speechをfirebaseに更新する
     updateHistory(val, type) {
       let database = firebase.database().ref();
       let updates = {};
@@ -105,5 +113,21 @@ img {
   max-height: 100%;
   width: auto;
   height: auto;
+}
+/* マイク点滅 */
+.flash {
+  animation: flashing 1.5s ease-out;
+  animation-iteration-count: infinite; /* 繰り返し回数 または infinite */
+}
+@keyframes flashing {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.4;
+  }
 }
 </style>

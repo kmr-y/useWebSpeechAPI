@@ -1,6 +1,8 @@
 # useWebSpeechAPI
 client and host Vue app with Web Speech Api.
 
+<img src="https://user-images.githubusercontent.com/49128348/57193920-7c627a80-6f7b-11e9-8ea5-55cb35d75f3d.png" alt="image" width="500" height="300">
+
 ## client
 Even if you do not enter characters, you can communicate with voice and speech.
 
@@ -15,13 +17,13 @@ Even if you don't have a microphone or speakers, you can still communicate using
 - Node.js
 - Vue.js
 - Vuetify
-- firebase
+- Firebase
 - Web Speech Api
 
 # Config for Firebase
 Set the configuration for your app
-- useWebSpeechAPI/host/src/firebase-config.js
-- useWebSpeechAPI/client/src/firebase-config.js
+- host/src/firebase-config.js
+- client/src/firebase-config.js
 ```sh
 // TODO: Replace with your project's config object
 export const firebaseConfig = {
@@ -31,6 +33,8 @@ export const firebaseConfig = {
     storageBucket: "bucket.appspot.com"
 }
 ```
+See [firebase.google.com/docs](https://firebase.google.com/docs/database/web/start?authuser=0#initialize_the_javascript_sdk) for guidelines.
+
 
 # Usage
 ## host
